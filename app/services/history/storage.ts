@@ -1,5 +1,6 @@
-import "server-only";
+import 'server-only';
 
-import path from "node:path";
+import {head, list, put} from '@vercel/blob';
+export {head, list, put};
 
-export const HISTORY_DIR = path.join(process.cwd(), "history");
+export const HISTORY_PREFIX = 'history/snapshots';

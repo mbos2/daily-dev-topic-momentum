@@ -1,40 +1,51 @@
-import type { ApiErrorResponse, TopicResolveResultDto } from "@/app/lib/types";
-import { resolveTopic } from "@/app/services/topics";
-import { type NextRequest, NextResponse } from "next/server";
+import {NextResponse} from 'next/server';
+import {resolveTopic} from '@/app/services/topics/resolve-topic';
+import type {TimeRange, TopicResolveResultDto} from '@/app/lib/types';
+import type {NextRequest} from 'next/server';
 
-function errorResponse(
-	status: number,
-	message: string,
-): NextResponse<ApiErrorResponse> {
-	return NextResponse.json(
-		{
-			error: "TOPIC_RESOLVE_ERROR",
-			message,
-		},
-		{
-			status,
-		},
-	);
+const VALID_RANGES: readonly TimeRange[] = ['day', 'week', 'month'];
+
+function isTimeRange(value: string): value is TimeRange {
+  return VALID_RANGES.includes(value as TimeRange);
 }
 
-export async function GET(
-	request: NextRequest,
-): Promise<NextResponse<TopicResolveResultDto | ApiErrorResponse>> {
-	const query = request.nextUrl.searchParams.get("q");
+function jsonError(status: number, message: string): NextResponse {
+  return NextResponse.json(
+    {
+      error: true,
+      message,
+    },
+    {
+      status,
+    },
+  );
+}
 
-	if (!query) {
-		return errorResponse(400, 'Missing query parameter "q"');
-	}
+export async function GET(request: NextRequest): Promise<NextResponse> {
+  const query = request.nextUrl.searchParams.get('q');
 
-	try {
-		const result = await resolveTopic(query);
+  if (!query) {
+    return jsonError(400, 'Missing query parameter "q"');
+  }
 
-		return NextResponse.json(result);
-	} catch (error) {
-		if (error instanceof Error) {
-			return errorResponse(422, error.message);
-		}
+  const range = request.nextUrl.searchParams.get('range');
 
-		return errorResponse(500, "Unexpected error");
-	}
+  if (!range) {
+    return jsonError(400, 'Missing query parameter "range"');
+  }
+
+  if (!isTimeRange(range)) {
+    return jsonError(400, 'Invalid range. Allowed: day, week, month');
+  }
+
+  try {
+    const result: TopicResolveResultDto = await resolveTopic(query, range);
+    return NextResponse.json(result);
+  } catch (error) {
+    if (error instanceof Error) {
+      return jsonError(422, error.message);
+    }
+
+    return jsonError(500, 'Unexpected error');
+  }
 }

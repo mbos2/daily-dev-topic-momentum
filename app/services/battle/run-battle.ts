@@ -1,86 +1,54 @@
-import "server-only";
+import 'server-only';
 
-import { aggregateTopic } from "./aggregate-topic";
-import { buildStats } from "./build-stats";
-import { calculateOverlap } from "./calculate-overlap";
-import type {
-	DailyFeedPost,
-	DailyComment,
-	BattleQuery,
-	BattleResponseDto,
-} from "@/app/lib/types";
-import { getFeedByTag } from "../daily-dev/feeds";
-import { getComments } from "../daily-dev/posts";
+import {searchAllPosts} from '../daily-dev/search';
+import {aggregateTopic} from './aggregate-topic';
+import {buildStats} from './build-stats';
+import {calculateOverlap} from './calculate-overlap';
+import type {BattleQuery, BattleResponseDto, BattleTopic, DailyFeedPost} from '@/app/lib/types';
 
 interface TopicFeed {
-	topic: string;
-
-	posts: DailyFeedPost[];
+  readonly topic: string;
+  readonly posts: readonly DailyFeedPost[];
 }
 
-async function fetchFeeds(topics: readonly string[]): Promise<TopicFeed[]> {
-	const result: TopicFeed[] = [];
+async function fetchFeeds(query: BattleQuery): Promise<readonly TopicFeed[]> {
+  const feeds: TopicFeed[] = [];
 
-	for (const topic of topics) {
-		const feed = await getFeedByTag(topic);
+  for (const topic of query.topics) {
+    const posts = await searchAllPosts({
+      query: topic,
+      range: query.range,
+    });
 
-		result.push({
-			topic,
-			posts: feed.data,
-		});
-	}
+    feeds.push({
+      topic,
+      posts,
+    });
+  }
 
-	return result;
+  return feeds;
 }
 
-async function fetchComments(
-	posts: readonly DailyFeedPost[],
-): Promise<Map<string, DailyComment[]>> {
-	const result = new Map<string, DailyComment[]>();
+export async function runBattle(query: BattleQuery): Promise<BattleResponseDto> {
+  const feeds = await fetchFeeds(query);
+  const overlap = calculateOverlap(feeds.map((feed) => feed.posts.map((post) => post.id)));
+  const topics: BattleTopic[] = feeds.map((feed) =>
+    aggregateTopic({
+      topic: feed.topic,
+      posts: feed.posts,
+      overlapPostIds: overlap.sharedPostIds,
+    }),
+  );
 
-	for (const post of posts) {
-		const comments = await getComments(post.id);
-		result.set(post.id, comments.data);
-	}
+  const winner = topics.reduce((best, current) =>
+    current.stats.engagement.total > best.stats.engagement.total ? current : best,
+  );
 
-	return result;
-}
-
-export async function runBattle(
-	query: BattleQuery,
-): Promise<BattleResponseDto> {
-	const feeds = await fetchFeeds(query.topics);
-
-	const overlap = calculateOverlap(
-		feeds.map((feed) => feed.posts.map((post) => post.id)),
-	);
-
-	const topics = [];
-
-	for (const feed of feeds) {
-		const comments = await fetchComments(feed.posts);
-
-		topics.push(
-			aggregateTopic({
-				topic: feed.topic,
-				posts: feed.posts,
-				commentsByPostId: comments,
-				overlapPostIds: overlap.sharedPostIds,
-			}),
-		);
-	}
-
-	const winner = topics.reduce((best, current) =>
-		current.stats.engagement.total > best.stats.engagement.total
-			? current
-			: best,
-	);
-
-	return {
-		range: query.range,
-		winner: winner.stats.topic,
-		sharedPosts: overlap.overlapCount,
-		topics,
-		stats: buildStats(topics),
-	};
+  return {
+    range: query.range,
+    winner: winner.stats.topic,
+    sharedPosts: overlap.overlapCount,
+    topics,
+    stats: buildStats(topics),
+  };
 }

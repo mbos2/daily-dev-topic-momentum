@@ -1,6 +1,6 @@
-import { readHistory } from "@/app/services/history";
-import { NextResponse } from "next/server";
+import {readHistory} from '@/app/services/history';
+import {NextResponse} from 'next/server';
 
 export async function GET() {
-	return NextResponse.json(await readHistory());
+  return NextResponse.json(await readHistory());
 }

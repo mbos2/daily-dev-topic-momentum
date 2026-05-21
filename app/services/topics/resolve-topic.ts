@@ -1,51 +1,34 @@
-import type { TopicResolveResultDto } from "@/app/lib/types";
 import "server-only";
-import { searchTags, searchPosts } from "../daily-dev/search";
 
-function normalize(value: string): string {
-	return value.trim().toLowerCase();
-}
+import type { ResolvedTopicType, TimeRange } from "@/app/lib/types";
 
-function isExactTagMatch(query: string, tag: string): boolean {
-	return normalize(query) === normalize(tag);
+import { searchTags } from "../daily-dev/search";
+
+interface ResolvedTopic {
+	readonly resolvedType: ResolvedTopicType;
+
+	readonly resolvedValue: string;
 }
 
 export async function resolveTopic(
 	query: string,
-): Promise<TopicResolveResultDto> {
-	const normalizedQuery = normalize(query);
+	_range: TimeRange,
+): Promise<ResolvedTopic> {
+	const normalized = query.trim().toLowerCase();
 
-	if (normalizedQuery.length === 0) {
-		throw new Error("Topic query cannot be empty");
-	}
+	const response = await searchTags(normalized);
 
-	const tagsResponse = await searchTags({
-		query: normalizedQuery,
-	});
-
-	const exactTag = tagsResponse.data.find((tag) =>
-		isExactTagMatch(normalizedQuery, tag.name),
+	const match = response.data.find(
+		(tag) => tag.name.toLowerCase() === normalized,
 	);
 
-	if (exactTag) {
-		return {
-			resolvedType: "tag",
-			resolvedValue: exactTag.name,
-		};
+	if (match === undefined) {
+		throw new Error(`Topic not found: ${query}`);
 	}
 
-	const postsResponse = await searchPosts({
-		query: normalizedQuery,
-		limit: 1,
-	});
+	return {
+		resolvedType: "tag",
 
-	if (postsResponse.data.length > 0) {
-		return {
-			resolvedType: "post-search",
-
-			resolvedValue: normalizedQuery,
-		};
-	}
-
-	throw new Error(`Unable to resolve topic "${query}"`);
+		resolvedValue: match.name,
+	};
 }
