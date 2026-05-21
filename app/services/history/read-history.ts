@@ -1,29 +1,53 @@
 import "server-only";
 
-import fs from "node:fs/promises";
-import path from "node:path";
+import { list } from "@vercel/blob";
+
+import { HISTORY_PREFIX } from "./storage";
 import type {
 	HistorySnapshotListItem,
+	BattleSnapshot,
 	HistoryResponseDto,
 } from "@/app/lib/types";
 
-const HISTORY_DIR = path.join(process.cwd(), "history");
+async function loadSnapshot(url: string): Promise<HistorySnapshotListItem> {
+	const response = await fetch(url, {
+		headers: {
+			Authorization: `Bearer ${process.env.BLOB_READ_WRITE_TOKEN}`,
+		},
+		cache: "no-store",
+	});
 
-async function readSnapshots(): Promise<HistorySnapshotListItem[]> {
-	try {
-		const file = await fs.readFile(
-			path.join(HISTORY_DIR, "snapshots.json"),
-			"utf8",
-		);
-
-		return JSON.parse(file) as HistorySnapshotListItem[];
-	} catch {
-		return [];
+	if (!response.ok) {
+		throw new Error(await response.text());
 	}
+
+	const snapshot = (await response.json()) as BattleSnapshot;
+
+	return {
+		id: snapshot.id,
+
+		battleName: snapshot.battleName,
+
+		createdAt: snapshot.createdAt,
+
+		winner: snapshot.winner,
+	};
 }
 
 export async function readHistory(): Promise<HistoryResponseDto> {
+	const result = await list({
+		prefix: HISTORY_PREFIX,
+	});
+
+	const snapshots = await Promise.all(
+		result.blobs.map((blob) => loadSnapshot(blob.url)),
+	);
+
+	snapshots.sort(
+		(a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+	);
+
 	return {
-		snapshots: await readSnapshots(),
+		snapshots,
 	};
 }

@@ -7,7 +7,6 @@ export interface TopicStats {
 	totalArticles: number;
 	totalComments: number;
 	totalUpvotes: number;
-	totalClicks: number;
 	totalAwards: number;
 	totalReadTime: number;
 	uniquePosts: number;
@@ -38,7 +37,6 @@ export interface BattleStats {
 
 export interface BattleTopic {
 	stats: TopicStats;
-	articles: BattleArticle[];
 }
 
 export interface BattleResponseDto {

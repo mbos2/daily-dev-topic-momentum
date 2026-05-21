@@ -34,7 +34,6 @@ export interface DailyFeedPost {
 	readTime: Nullable<number>;
 	numUpvotes: number;
 	numComments: number;
-	clicks: number;
 	author: Nullable<DailyAuthor>;
 }
 
@@ -54,7 +53,6 @@ export interface DailyPostDetail {
 	readTime: Nullable<number>;
 	numUpvotes: number;
 	numComments: number;
-	clicks: number;
 	bookmarked: boolean;
 	content: Nullable<string>;
 }

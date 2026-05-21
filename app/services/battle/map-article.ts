@@ -1,7 +1,8 @@
 import "server-only";
 
+import type { BattleArticle, DailyFeedPost } from "@/app/lib/types";
+
 import { calculateEngagement } from "./calculate-engagement";
-import type { DailyFeedPost, BattleArticle } from "@/app/lib/types";
 
 export function mapArticle(
 	article: DailyFeedPost,
@@ -9,8 +10,8 @@ export function mapArticle(
 ): BattleArticle {
 	const score = calculateEngagement({
 		comments: article.numComments,
+
 		upvotes: article.numUpvotes,
-		clicks: article.clicks,
 	});
 
 	return {
@@ -20,7 +21,6 @@ export function mapArticle(
 		source: article.source.name,
 		comments: article.numComments,
 		upvotes: article.numUpvotes,
-		clicks: article.clicks,
 		score: score.total,
 	};
 }

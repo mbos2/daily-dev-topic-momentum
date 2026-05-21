@@ -1,23 +1,22 @@
+import { runBattle } from "@/app/services/battle";
+import { createSnapshot, writeHistory } from "@/app/services/history";
 import type {
-	TimeRange,
 	ApiErrorResponse,
 	BattleQuery,
 	BattleResponseDto,
+	TimeRange,
 } from "@/app/lib/types";
-import { runBattle } from "@/app/services/battle/run-battle";
-import { resolveTopic } from "@/app/services/topics";
 import { type NextRequest, NextResponse } from "next/server";
 
-const ALLOWED_RANGES: readonly TimeRange[] = ["day", "week", "month"];
+const VALID_RANGES = ["day", "week", "month"] as const;
 
 function errorResponse(
 	status: number,
-	error: string,
 	message: string,
 ): NextResponse<ApiErrorResponse> {
 	return NextResponse.json(
 		{
-			error,
+			error: "BATTLE_REQUEST_ERROR",
 			message,
 		},
 		{
@@ -26,79 +25,57 @@ function errorResponse(
 	);
 }
 
-function parseTopics(value: string | null): BattleQuery["topics"] {
-	if (!value) {
-		throw new Error('Missing query parameter "topics"');
-	}
+function isRange(value: string): value is TimeRange {
+	return VALID_RANGES.some((range): boolean => range === value);
+}
 
-	const parsed = value
+function parseTopics(value: string): BattleQuery["topics"] {
+	const topics = value
 		.split(",")
-		.map((topic) => topic.trim())
-		.filter(Boolean);
+		.map((topic: string): string => topic.trim())
+		.filter((topic): boolean => topic.length > 0);
 
-	if (parsed.length < 2 || parsed.length > 3) {
-		throw new Error("Battle supports only 2 or 3 topics");
+	if (topics.length < 2 || topics.length > 3) {
+		throw new Error("Battle supports 2 or 3 topics");
 	}
 
-	if (parsed.length === 2) {
-		return [parsed[0], parsed[1]];
+	if (topics.length === 2) {
+		return [topics[0], topics[1]];
 	}
 
-	return [parsed[0], parsed[1], parsed[2]];
-}
-
-function isTimeRange(value: string): value is TimeRange {
-	return ALLOWED_RANGES.includes(value as TimeRange);
-}
-
-function parseRange(value: string | null): TimeRange {
-	if (!value) {
-		throw new Error('Missing query parameter "range"');
-	}
-
-	if (!isTimeRange(value)) {
-		throw new Error(`Invalid range "${value}"`);
-	}
-
-	return value;
-}
-
-async function resolveTopics(
-	topics: BattleQuery["topics"],
-): Promise<BattleQuery["topics"]> {
-	const resolved: string[] = [];
-
-	for (const topic of topics) {
-		const result = await resolveTopic(topic);
-
-		resolved.push(result.resolvedValue);
-	}
-
-	if (resolved.length === 2) {
-		return [resolved[0], resolved[1]];
-	}
-
-	return [resolved[0], resolved[1], resolved[2]];
+	return [topics[0], topics[1], topics[2]];
 }
 
 export async function GET(
 	request: NextRequest,
 ): Promise<NextResponse<BattleResponseDto | ApiErrorResponse>> {
 	try {
-		const topics = parseTopics(request.nextUrl.searchParams.get("topics"));
-		const range = parseRange(request.nextUrl.searchParams.get("range"));
-		const resolvedTopics = await resolveTopics(topics);
-		const result = await runBattle({
-			topics: resolvedTopics,
+		const topics = request.nextUrl.searchParams.get("topics");
+		const range = request.nextUrl.searchParams.get("range");
+		if (topics === null) {
+			return errorResponse(400, 'Missing "topics"');
+		}
+
+		if (range === null) {
+			return errorResponse(400, 'Missing "range"');
+		}
+
+		if (!isRange(range)) {
+			return errorResponse(400, `Invalid range "${range}"`);
+		}
+
+		const battle = await runBattle({
+			topics: parseTopics(topics),
 			range,
 		});
 
-		return NextResponse.json(result);
-	} catch (error) {
-		if (error instanceof Error) {
-			return errorResponse(400, "BATTLE_REQUEST_ERROR", error.message);
-		}
+		const snapshot = createSnapshot(battle);
 
-		return errorResponse(500, "INTERNAL_ERROR", "Unexpected error");
+		await writeHistory(snapshot);
+
+		return NextResponse.json(battle);
+	} catch (error) {
+		console.error(error);
+		return errorResponse(500, String(error));
 	}
 }

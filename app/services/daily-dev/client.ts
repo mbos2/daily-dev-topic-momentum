@@ -34,6 +34,16 @@ class DailyDevClient {
 			return response.data;
 		} catch (error) {
 			if (error instanceof AxiosError) {
+				console.log("daily.dev error", {
+					url: error.config?.url,
+
+					params: error.config?.params,
+
+					status: error.response?.status,
+
+					data: error.response?.data,
+				});
+
 				throw toDailyDevError(
 					error.response?.data as DailyDevErrorBody | undefined,
 					error.response?.status ?? 500,

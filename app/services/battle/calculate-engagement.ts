@@ -1,32 +1,22 @@
-import type { EngagementBreakdown } from "@/app/lib/types";
 import "server-only";
 
-const COMMENT_WEIGHT = 1.5;
-const UPVOTE_WEIGHT = 1.2;
-const CLICK_WEIGHT = 1.1;
+import type { EngagementBreakdown } from "@/app/lib/types";
 
-export interface EngagementInput {
-	readonly comments: number;
-	readonly upvotes: number;
-	readonly clicks: number;
-}
-
-function round(value: number): number {
-	return Number(value.toFixed(2));
+interface EngagementInput {
+	comments: number;
+	upvotes: number;
 }
 
 export function calculateEngagement(
 	input: EngagementInput,
 ): EngagementBreakdown {
-	const total =
-		input.comments * COMMENT_WEIGHT +
-		input.upvotes * UPVOTE_WEIGHT +
-		input.clicks * CLICK_WEIGHT;
+	const comments = input.comments;
+	const upvotes = input.upvotes;
+	const total = comments * 1.5 + upvotes * 1.2;
 
 	return {
-		comments: input.comments,
-		upvotes: input.upvotes,
-		clicks: input.clicks,
-		total: round(total),
+		comments,
+		upvotes,
+		total: Number(total.toFixed(2)),
 	};
 }

@@ -1,14 +1,20 @@
-import type { ApiErrorResponse, TopicResolveResultDto } from "@/app/lib/types";
-import { resolveTopic } from "@/app/services/topics";
-import { type NextRequest, NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
+import { NextResponse } from "next/server";
 
-function errorResponse(
-	status: number,
-	message: string,
-): NextResponse<ApiErrorResponse> {
+import type { TimeRange, TopicResolveResultDto } from "@/app/lib/types";
+
+import { resolveTopic } from "@/app/services/topics/resolve-topic";
+
+const VALID_RANGES: readonly TimeRange[] = ["day", "week", "month"];
+
+function isTimeRange(value: string): value is TimeRange {
+	return VALID_RANGES.includes(value as TimeRange);
+}
+
+function jsonError(status: number, message: string): NextResponse {
 	return NextResponse.json(
 		{
-			error: "TOPIC_RESOLVE_ERROR",
+			error: true,
 			message,
 		},
 		{
@@ -17,24 +23,32 @@ function errorResponse(
 	);
 }
 
-export async function GET(
-	request: NextRequest,
-): Promise<NextResponse<TopicResolveResultDto | ApiErrorResponse>> {
+export async function GET(request: NextRequest): Promise<NextResponse> {
 	const query = request.nextUrl.searchParams.get("q");
 
 	if (!query) {
-		return errorResponse(400, 'Missing query parameter "q"');
+		return jsonError(400, 'Missing query parameter "q"');
+	}
+
+	const range = request.nextUrl.searchParams.get("range");
+
+	if (!range) {
+		return jsonError(400, 'Missing query parameter "range"');
+	}
+
+	if (!isTimeRange(range)) {
+		return jsonError(400, "Invalid range. Allowed: day, week, month");
 	}
 
 	try {
-		const result = await resolveTopic(query);
+		const result: TopicResolveResultDto = await resolveTopic(query, range);
 
 		return NextResponse.json(result);
 	} catch (error) {
 		if (error instanceof Error) {
-			return errorResponse(422, error.message);
+			return jsonError(422, error.message);
 		}
 
-		return errorResponse(500, "Unexpected error");
+		return jsonError(500, "Unexpected error");
 	}
 }

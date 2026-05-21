@@ -5,7 +5,6 @@ export interface BattleArticle {
 	source: string;
 	comments: number;
 	upvotes: number;
-	clicks: number;
 	score: number;
 }
 
