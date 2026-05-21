@@ -41,7 +41,7 @@ export async function runBattle(query: BattleQuery): Promise<BattleResponseDto> 
   );
 
   const winner = topics.reduce((best, current) =>
-    current.stats.engagement.total > best.stats.engagement.total ? current : best,
+    current.stats.engagement.score > best.stats.engagement.score ? current : best,
   );
 
   return {

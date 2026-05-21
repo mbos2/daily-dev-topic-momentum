@@ -5,7 +5,7 @@ export function buildStats(topics: readonly BattleTopic[]): BattleStats {
   return {
     engagement: topics.map((topic) => ({
       topic: topic.stats.topic,
-      score: topic.stats.engagement.total,
+      score: topic.stats.engagement.score,
     })),
 
     articles: topics.map((topic) => ({
