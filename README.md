@@ -1,4 +1,4 @@
-# Topic Battles
+# Daily Dev Topic Pulse
 
 Topic Battles is a hackathon project built on top of the daily.dev public API.
 
