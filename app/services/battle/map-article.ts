@@ -1,26 +1,16 @@
-import "server-only";
+import 'server-only';
 
-import type { BattleArticle, DailyFeedPost } from "@/app/lib/types";
+import type {BattleTopicPost, DailyFeedPost} from '@/app/lib/types';
 
-import { calculateEngagement } from "./calculate-engagement";
+function calculateScore(post: DailyFeedPost): number {
+  const total = post.numComments * 1.5 + post.numUpvotes * 1.2;
 
-export function mapArticle(
-	article: DailyFeedPost,
-	rank: number,
-): BattleArticle {
-	const score = calculateEngagement({
-		comments: article.numComments,
+  return Number(total.toFixed(2));
+}
 
-		upvotes: article.numUpvotes,
-	});
-
-	return {
-		id: article.id,
-		rank,
-		title: article.title,
-		source: article.source.name,
-		comments: article.numComments,
-		upvotes: article.numUpvotes,
-		score: score.total,
-	};
+export function mapArticle(post: DailyFeedPost): BattleTopicPost {
+  return {
+    feedPost: post,
+    score: calculateScore(post),
+  };
 }

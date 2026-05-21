@@ -1,95 +1,81 @@
-import "server-only";
+import 'server-only';
 
-import type {
-	DailyCollectionResponse,
-	DailyFeedPost,
-	DailyTag,
-	TimeRange,
-} from "@/app/lib/types";
-
-import { dailyDevClient } from "./client";
+import {dailyDevClient} from './client';
+import type {DailyCollectionResponse, DailyFeedPost, DailyTag, TimeRange} from '@/app/lib/types';
 
 interface SearchPostsInput {
-	readonly query: string;
-	readonly range: TimeRange;
-	readonly limit?: number;
-	readonly cursor?: string;
+  readonly query: string;
+  readonly range: TimeRange;
+  readonly limit?: number;
+  readonly cursor?: string;
 }
 
 interface SearchTagsResponse {
-	readonly data: readonly DailyTag[];
+  readonly data: readonly DailyTag[];
 }
 
 const DEFAULT_LIMIT = 50;
 
 export async function searchTags(query: string): Promise<SearchTagsResponse> {
-	return dailyDevClient.get<SearchTagsResponse>("/search/tags", {
-		params: {
-			q: query,
-		},
-	});
+  return dailyDevClient.get<SearchTagsResponse>('/search/tags', {
+    params: {
+      q: query,
+    },
+  });
 }
 
-export async function searchPosts(
-	input: SearchPostsInput,
-): Promise<DailyCollectionResponse<DailyFeedPost>> {
-	const params: {
-		q: string;
-		time: TimeRange;
-		limit: number;
-		cursor?: string;
-	} = {
-		q: input.query,
-		time: input.range,
-		limit: input.limit ?? DEFAULT_LIMIT,
-	};
+export async function searchPosts(input: SearchPostsInput): Promise<DailyCollectionResponse<DailyFeedPost>> {
+  const params: {
+    q: string;
+    time: TimeRange;
+    limit: number;
+    cursor?: string;
+  } = {
+    q: input.query,
+    time: input.range,
+    limit: input.limit ?? DEFAULT_LIMIT,
+  };
 
-	if (input.cursor !== undefined) {
-		params.cursor = input.cursor;
-	}
+  if (input.cursor !== undefined) {
+    params.cursor = input.cursor;
+  }
 
-	return dailyDevClient.get<DailyCollectionResponse<DailyFeedPost>>(
-		"/search/posts",
-		{
-			params,
-		},
-	);
+  return dailyDevClient.get<DailyCollectionResponse<DailyFeedPost>>('/search/posts', {
+    params,
+  });
 }
 
 export async function searchAllPosts(
-	input: Omit<SearchPostsInput, "cursor" | "limit">,
+  input: Omit<SearchPostsInput, 'cursor' | 'limit'>,
 ): Promise<readonly DailyFeedPost[]> {
-	const posts: DailyFeedPost[] = [];
+  const posts: DailyFeedPost[] = [];
 
-	let cursor: string | undefined;
+  let cursor: string | undefined;
 
-	for (;;) {
-		try {
-			const response = await searchPosts({
-				query: input.query,
+  for (;;) {
+    try {
+      const response = await searchPosts({
+        query: input.query,
+        range: input.range,
+        limit: DEFAULT_LIMIT,
+        cursor,
+      });
 
-				range: input.range,
+      posts.push(...response.data);
 
-				limit: DEFAULT_LIMIT,
+      if (!response.pagination.hasNextPage) {
+        break;
+      }
 
-				cursor,
-			});
+      cursor = response.pagination.cursor ?? undefined;
 
-			posts.push(...response.data);
+      if (cursor === undefined) {
+        break;
+      }
+    } catch {
+      break;
+    }
+  }
 
-			if (!response.pagination.hasNextPage) {
-				break;
-			}
-
-			cursor = response.pagination.cursor ?? undefined;
-
-			if (cursor === undefined) {
-				break;
-			}
-		} catch {
-			break;
-		}
-	}
-
-	return posts;
+  return posts;
 }

@@ -1,13 +1,13 @@
 export interface ApiErrorResponse {
-	error: string;
-	message: string;
+  error: string;
+  message: string;
 }
 
 export interface SuccessResponse {
-	success: true;
+  success: true;
 }
 
 export interface ApiErrorResponse {
-	error: string;
-	message: string;
+  error: string;
+  message: string;
 }
