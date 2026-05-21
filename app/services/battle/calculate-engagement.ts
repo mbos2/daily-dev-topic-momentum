@@ -15,6 +15,6 @@ export function calculateEngagement(input: EngagementInput): EngagementBreakdown
   return {
     comments,
     upvotes,
-    total: Number(total.toFixed(2)),
+    score: Number(total.toFixed(2)),
   };
 }

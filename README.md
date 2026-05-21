@@ -1,36 +1,147 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Topic Battles
 
-## Getting Started
+Topic Battles is a hackathon project built on top of the daily.dev public API.
 
-First, run the development server:
+The goal is to compare developer topics over time and determine which topic wins based on engagement and article quality.
+
+This project is intentionally content-first and not an analytics dashboard.
+
+---
+
+## Features
+
+### Topic Battles
+
+Compare 2 or 3 topics.
+
+Examples:
+
+- React vs Vue
+- Rust vs Go
+- Rust vs Go vs Svelte
+
+---
+
+### Time Ranges
+
+Supported ranges:
+
+- Day
+- Week
+- Month
+
+---
+
+### Topic Statistics
+
+Per topic:
+
+- Total Articles
+- Total Comments
+- Total Upvotes
+- Total Read Time
+- Unique Articles
+- Shared Articles
+- Engagement Score calculated based on other stats
+
+---
+
+### Top Articles
+
+Each topic returns:
+
+- article
+- calculated score
+
+Sorted descending.
+
+---
+
+## Architecture
+
+Frontend
+
+↓
+
+Next.js API
+
+↓
+
+daily.dev API
+
+↓
+
+Transform
+
+↓
+
+Response
+
+Frontend never calls daily.dev directly.
+
+---
+
+## Stack
+
+Frontend:
+
+- Next.js (App Router)
+- TypeScript
+- Chakra UI
+- TailwindCSS
+
+Backend:
+
+- Next.js Route Handlers
+- Axios
+
+Storage for history snapshots:
+
+- JSON files
+
+Hosting:
+
+- Vercel
+
+---
+
+## Environment
+
+Create:
+
+.env.local
+
+Example:
+
+```env
+DAILY_DEV_API_BASE_URL=
+DAILY_DEV_API_TOKEN=
+BLOB_STORE_ID="store_xN6XJAStCrRJpEk4"
+BLOB_READ_WRITE_TOKEN="vercel_blob_rw_xN6XJAStCrRJpEk4_vJdw2RbdIKbArM9abqKg0p88mSQYHD"
+```
+
+---
+
+## Run
+
+Install:
+
+```bash
+npm install
+```
+
+Run:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Deployment
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Vercel
 
-## Learn More
+Environment variables must be configured in Vercel dashboard.
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
