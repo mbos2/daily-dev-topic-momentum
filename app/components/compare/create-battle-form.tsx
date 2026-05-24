@@ -246,7 +246,7 @@ export function CreateBattleForm() {
               <Text
                 fontSize={{
                   base: '1.75rem',
-                  lg: '2rem',
+                  lg: '1.2rem',
                 }}
                 textAlign={'center'}
                 lineHeight="1.2"
@@ -259,12 +259,7 @@ export function CreateBattleForm() {
                   WebkitLineClamp: 2,
                   WebkitBoxOrient: 'vertical',
                 }}>
-                {value || 'No topic selected'}
-                {!value && (
-                  <Text mt={1} fontSize="0.875rem" color="#6f7685" textAlign={'center'}>
-                    Choose from Browse Topics below
-                  </Text>
-                )}
+                {!value && 'Choose topic bellow'}
               </Text>
 
               {value && (
@@ -400,7 +395,7 @@ export function CreateBattleForm() {
               color={'#ff7d4a'}>
               Browse Topics
             </Text>
-            <Text color="#8b8f99">Click to add into selection.</Text>
+            <Text color="rgba(139, 143, 153, 1)">Click to add into selection.</Text>
           </Box>
 
           <Input
@@ -424,25 +419,31 @@ export function CreateBattleForm() {
             </Text>
           </Box>
         ) : (
-          <Box>
+          <Box display="flex" flexWrap="wrap" gap="0.75rem">
             {filtered.map((tag) => (
-              <Tag.Root
-                key={tag.name}
-                display="inline-flex"
-                cursor="pointer"
-                m="8px"
-                px="18px"
-                py="10px"
-                borderRadius="999px"
-                bg={selected.includes(tag.name) ? '#241913' : '#0d1017'}
-                border="1px solid"
-                borderColor={selected.includes(tag.name) ? '#ff7d4a' : '#202636'}
-                onClick={() => addTopic(tag.name)}>
-                <Tag.Label
-                  color={selected.includes(tag.name) ? '#ffb28d' : '#ffffff'}
-                  fontSize={{base: '12px', md: '18px'}}>
-                  {tag.name}
-                </Tag.Label>
+              <Tag.Root key={tag.name} asChild>
+                <Box
+                  as="button"
+                  cursor="pointer"
+                  px="1.125rem"
+                  h="3rem"
+                  display="flex"
+                  alignItems="center"
+                  justifyContent="center"
+                  borderRadius="5px"
+                  bg="#07080d"
+                  border="1px solid"
+                  borderColor={selected.includes(tag.name) ? '#ff7d4a' : '#202636'}
+                  boxShadow={selected.includes(tag.name) ? '0px 0px 5px 2px rgba(255,125,74,1)' : ''}
+                  flexShrink={0}
+                  onClick={() => addTopic(tag.name)}>
+                  <Tag.Label
+                    color={selected.includes(tag.name) ? '#f0cbbaff' : '#ff7d4a'}
+                    fontSize="1.125rem"
+                    lineHeight="1">
+                    {tag.name}
+                  </Tag.Label>
+                </Box>
               </Tag.Root>
             ))}
           </Box>

@@ -35,69 +35,69 @@ function TopicTable({topic}: {topic: BattleResponseDto['topics'][number]}) {
   const rows = topic.posts.slice().sort((left, right) => right.score - left.score);
 
   return (
-    <VStack align="stretch" gap={5}>
-      <Text
-        fontWeight="800"
-        fontSize={{
-          base: '2xl',
-          lg: '4xl',
-        }}>
-        {capitalize(topic.stats.topic)}: Top {Math.min(visible, rows.length)} Articles
-      </Text>
-
-      <Box overflowX="auto" overflowY="hidden" maxW="100%" bg="#15171d" border="1px solid #252933" borderRadius="2rem">
-        <Table.Root
-          variant="outline"
-          minW={{
-            base: '40rem',
-            lg: '100%',
+    <Box width="100%" maxW={{base: '85vw', md: '100%'}}>
+      <VStack align="stretch" gap={5}>
+        <Text
+          fontWeight="800"
+          fontSize={{
+            base: '2xl',
+            lg: '4xl',
           }}>
-          <Table.Header>
-            <Table.Row borderBottom="1px solid #252933">
-              <Header>Rank</Header>
-              <Header>Title</Header>
+          {capitalize(topic.stats.topic)}: Top {Math.min(visible, rows.length)} Articles
+        </Text>
 
-              <Table.ColumnHeader
-                display={{
-                  base: 'none',
-                  md: 'table-cell',
-                }}>
+        <Box
+          overflowX="auto"
+          overflowY="hidden"
+          maxW="100%"
+          bg="#15171d"
+          border="1px solid #252933"
+          borderRadius={{base: '0.5rem', md: '2rem'}}>
+          <Table.Root
+            variant="outline"
+            minW={{
+              base: '40rem',
+              lg: '100%',
+            }}>
+            <Table.Header>
+              <Table.Row borderBottom="1px solid #252933">
+                <Header>Rank</Header>
+                <Header>Title</Header>
                 <Header>Source</Header>
-              </Table.ColumnHeader>
+                <Header numeric>Comments</Header>
+                <Header numeric>Upvotes</Header>
+                <Header numeric>Momentum</Header>
+              </Table.Row>
+            </Table.Header>
 
-              <Header numeric>Comments</Header>
-              <Header numeric>Upvotes</Header>
-              <Header numeric>Momentum</Header>
-            </Table.Row>
-          </Table.Header>
+            <Table.Body>
+              {rows.slice(0, visible).map((post, index) => (
+                <ArticleRow key={post.feedPost.id} rank={index + 1} post={post} />
+              ))}
+            </Table.Body>
+          </Table.Root>
 
-          <Table.Body>
-            {rows.slice(0, visible).map((post, index) => (
-              <ArticleRow key={post.feedPost.id} rank={index + 1} post={post} />
-            ))}
-          </Table.Body>
-        </Table.Root>
-
-        {visible < rows.length && (
-          <Box p={5}>
-            <Button
-              w="full"
-              fontSize="xl"
-              h="4rem"
-              borderRadius="16px"
-              bg="transparent"
-              color="white"
-              border="1px solid #252933"
-              _hover={{
-                bg: '#1b1e25',
-              }}
-              onClick={() => setVisible((current) => current + STEP)}>
-              LOAD MORE
-            </Button>
-          </Box>
-        )}
-      </Box>
-    </VStack>
+          {visible < rows.length && (
+            <Box p={5}>
+              <Button
+                w="full"
+                fontSize="xl"
+                h="4rem"
+                borderRadius="16px"
+                bg="transparent"
+                color="white"
+                border="1px solid #252933"
+                _hover={{
+                  bg: '#1b1e25',
+                }}
+                onClick={() => setVisible((current) => current + STEP)}>
+                LOAD MORE
+              </Button>
+            </Box>
+          )}
+        </Box>
+      </VStack>
+    </Box>
   );
 }
 
@@ -155,13 +155,7 @@ function ArticleRow({rank, post}: {rank: number; post: BattleResponseDto['topics
         </Link>
       </Table.Cell>
 
-      <Table.Cell
-        display={{
-          base: 'none',
-          md: 'table-cell',
-        }}
-        px={8}
-        py={7}>
+      <Table.Cell px={8} py={7}>
         <Link href={post.feedPost.url} target="_blank" rel="noopener noreferrer">
           <Text
             color="#9aa2b2"

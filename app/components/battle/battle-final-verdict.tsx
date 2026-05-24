@@ -59,24 +59,50 @@ export function BattleFinalVerdict({battle, onReplay, onCompareAgain}: BattleFin
         w="full"
         maxW="48rem">
         <Button
-          flex={1}
-          h="4.5rem"
+          flex={{
+            base: 'unset',
+            md: 1,
+          }}
+          w={{
+            base: '100%',
+            md: 'auto',
+          }}
+          h={{
+            base: '3.5rem',
+            md: '4.5rem',
+          }}
           bg="#ff5a1f"
           color="white"
           borderRadius="1rem"
-          onClick={onReplay}
-          fontSize={'1.6rem'}>
+          fontSize={{
+            base: '1.125rem',
+            md: '1.6rem',
+          }}
+          onClick={onReplay}>
           Replay Battle
         </Button>
 
         <Button
-          flex={1}
-          fontSize={'1.6rem'}
-          h="4.5rem"
+          flex={{
+            base: 'unset',
+            md: 1,
+          }}
+          w={{
+            base: '100%',
+            md: 'auto',
+          }}
+          h={{
+            base: '3.5rem',
+            md: '4.5rem',
+          }}
           variant="outline"
           borderColor="#252933"
           color="white"
           borderRadius="1rem"
+          fontSize={{
+            base: '1.125rem',
+            md: '1.6rem',
+          }}
           _hover={{
             color: '#ff5a1f',
           }}
