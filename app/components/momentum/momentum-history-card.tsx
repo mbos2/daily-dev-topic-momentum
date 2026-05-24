@@ -24,10 +24,10 @@ function delta(battle: HistorySnapshotPartial): string {
   const values = battle.topics.map((topic) => topic.momentum).sort((a, b) => b - a);
 
   if (values.length < 2) {
-    return '+0%';
+    return '+0';
   }
 
-  return `+${Math.abs(values[0] - values[1]).toFixed(1)}%`;
+  return `+${Math.abs(values[0] - values[1]).toFixed(1)}`;
 }
 
 export function MomentumHistoryCard({battle}: Props) {
@@ -68,15 +68,15 @@ export function MomentumHistoryCard({battle}: Props) {
               fontWeight="800"
               lineHeight="1.12"
               fontSize={{
-                base: '26px',
-                lg: '30px',
+                base: '22px',
+                lg: '26px',
               }}>
               {title(battle)}
             </Text>
           </Box>
 
           <Box>
-            <Text color="#9AA4B2" fontSize="13px">
+            <Text color="#9AA4B2" fontSize="20px">
               Winner:{' '}
               <Box as="span" color="#FF8F6A">
                 {winner(battle)}
@@ -93,6 +93,9 @@ export function MomentumHistoryCard({battle}: Props) {
             base: 10,
             lg: 12,
           }}>
+          <Box fontSize={'0.8rem'} color={'#FF8F6A'}>
+            MOMENTUM
+          </Box>
           <Text
             color="white"
             fontWeight="900"
@@ -111,7 +114,11 @@ export function MomentumHistoryCard({battle}: Props) {
             </Text>
 
             <VStack align="end" gap={2}>
+              <Box fontSize={'0.8rem'} color={'#FF8F6A'}>
+                VICTORY DELTA
+              </Box>
               <Text
+                mt={'-2'}
                 color="#FF9F82"
                 fontWeight="800"
                 textAlign="right"
