@@ -12,7 +12,7 @@ interface Props {
 
 export function MomentumPage({data}: Props) {
   return (
-    <Box width="100%" pb={24}>
+    <Box width="100%">
       <VStack
         width="100%"
         align="stretch"

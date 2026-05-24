@@ -23,10 +23,10 @@ function getDelta(battle: HistorySnapshotPartial): string {
   const values = battle.topics.map((topic) => topic.momentum).sort((a, b) => b - a);
 
   if (values.length < 2) {
-    return '0%';
+    return '0';
   }
 
-  return `${Math.abs(values[0] - values[1]).toFixed(1)}%`;
+  return `${Math.abs(values[0] - values[1]).toFixed(1)}`;
 }
 
 function EmptyCard({title}: {title: string}) {
@@ -73,8 +73,8 @@ function FeaturedCard({battle}: {battle: HistorySnapshotPartial}) {
           fontWeight="900"
           lineHeight="0.95"
           fontSize={{
-            base: '42px',
-            lg: '64px',
+            base: '32px',
+            lg: '48px',
           }}>
           {getBattleTitle(battle)}
         </Text>
@@ -82,12 +82,12 @@ function FeaturedCard({battle}: {battle: HistorySnapshotPartial}) {
         <Spacer />
 
         <VStack align="start">
-          <Text color="#B8C0CF" fontSize="12px">
+          <Text color="#B8C0CF" fontSize="12px" mt={{base: 8, md: 0}}>
             MOMENTUM SCORE
           </Text>
 
           <Text
-            color="white"
+            color="#FF8F6A"
             lineHeight="1"
             fontWeight="900"
             fontSize={{
@@ -118,7 +118,7 @@ function ClosestCard({battle}: {battle: HistorySnapshotPartial}) {
         border="1px solid"
         borderColor="whiteAlpha.100"
         p={{
-          base: 8,
+          base: 4,
           lg: 12,
         }}>
         <Text color="#2F73FF" fontWeight="700" letterSpacing="0.18em" fontSize="12px">
@@ -143,17 +143,22 @@ function ClosestCard({battle}: {battle: HistorySnapshotPartial}) {
               Victory Delta
             </Text>
 
-            <Text mt={2} color="#FF8F6A" fontWeight="900" fontSize="46px">
+            <Text mt={2} color="#FF8F6A" fontWeight="900" fontSize={{base: '2rem', md: '2.5rem'}}>
               {getDelta(battle)}
             </Text>
           </Box>
 
           <Box>
-            <Text color="#A0A7B4" fontSize="12px">
+            <Text color="#A0A7B4" fontSize="16px">
               Period
             </Text>
 
-            <Text mt={6} color="white" fontWeight="900" fontSize="36px" textTransform={'uppercase'}>
+            <Text
+              mt={{base: 2}}
+              color="white"
+              fontWeight="900"
+              fontSize={{base: '2rem', md: '2.5rem'}}
+              textTransform={'uppercase'}>
               {battle.period}
             </Text>
           </Box>
