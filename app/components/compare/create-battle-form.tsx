@@ -262,11 +262,7 @@ export function CreateBattleForm() {
                 {value || 'No topic selected'}
                 {!value && (
                   <Text mt={1} fontSize="0.875rem" color="#6f7685" textAlign={'center'}>
-                    Choose from{' '}
-                    <Box as={'span'} color={'#ff7d4a'}>
-                      Browse Topics
-                    </Box>{' '}
-                    below
+                    Choose from Browse Topics below
                   </Text>
                 )}
               </Text>
