@@ -1,16 +1,12 @@
 'use client';
 
 import {useEffect, useMemo, useState} from 'react';
-
 import {Box, Button, HStack, Input, Spinner, Stack, Tag, Text, VStack} from '@chakra-ui/react';
-
 import {IoCloseCircleSharp} from 'react-icons/io5';
-
 import {getTags} from '@/app/lib/api/get-tags';
-
 import {BattleResult} from '@/app/components/battle/battle-result';
-
 import type {BattleResponseDto, DailyTag} from '@/app/lib/types';
+import {getBattle} from '@/app/lib/api/get-battle';
 
 const MIN_TOPICS = 2;
 const FORM_SLOTS = 3;
@@ -66,13 +62,10 @@ export function CreateBattleForm() {
     setLoading(true);
 
     try {
-      const response = await fetch(`/api/battle?topics=${randomTopics.join(',')}&range=${range}`);
-
-      if (!response.ok) {
-        throw new Error('Battle failed');
-      }
-
-      const data = (await response.json()) as BattleResponseDto;
+      const data = await getBattle({
+        topics: randomTopics,
+        range,
+      });
 
       setBattle(data);
     } finally {
@@ -121,14 +114,10 @@ export function CreateBattleForm() {
     setLoading(true);
 
     try {
-      const topics = selected.filter(Boolean).join(',');
-      const response = await fetch(`/api/battle?topics=${topics}&range=${range}`);
-
-      if (!response.ok) {
-        throw new Error('Battle failed');
-      }
-
-      const data = (await response.json()) as BattleResponseDto;
+      const data = await getBattle({
+        topics: selected.filter(Boolean),
+        range,
+      });
 
       setBattle(data);
     } finally {
