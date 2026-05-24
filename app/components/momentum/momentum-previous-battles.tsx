@@ -74,12 +74,13 @@ export function MomentumPreviousBattles({battles}: Props) {
             h="76px"
             minW={{
               base: '100%',
-
               lg: '320px',
             }}
-            borderColor="whiteAlpha.200"
+            borderColor="#ff6b2c"
+            color={'#ff6b2c'}
             _hover={{
-              bg: 'whiteAlpha.50',
+              boxShadow: '0px 0px 5px 2px rgba(255,125,74,1)',
+              bg: 'none',
             }}>
             LOAD MORE HISTORY
           </Button>
