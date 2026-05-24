@@ -81,7 +81,7 @@ function FeaturedCard({battle}: {battle: HistorySnapshotPartial}) {
 
         <VStack align="start">
           <Text color="#B8C0CF" fontSize="12px" mt={{base: 8, md: 0}}>
-            MOMENTUM SCORE
+            TOTAL BATTLE MOMENTUM
           </Text>
 
           <Text
