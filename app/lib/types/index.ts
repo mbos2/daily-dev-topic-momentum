@@ -8,3 +8,4 @@ export * from './env';
 export * from './history';
 export * from './range';
 export * from './topic';
+export * from './tags';

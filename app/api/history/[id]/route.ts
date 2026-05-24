@@ -11,5 +11,21 @@ export async function GET(
 ) {
   const {id} = await context.params;
 
-  return NextResponse.json(await readSnapshot(id));
+  try {
+    const snapshot = await readSnapshot(id);
+
+    return NextResponse.json({
+      snapshot,
+    });
+  } catch {
+    return NextResponse.json(
+      {
+        error: 'SNAPSHOT_NOT_FOUND',
+      },
+
+      {
+        status: 404,
+      },
+    );
+  }
 }

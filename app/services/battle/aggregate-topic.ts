@@ -66,6 +66,17 @@ export function aggregateTopic(input: AggregateTopicInput): BattleTopic {
       },
     },
 
-    posts: [],
+    posts: input.posts
+      .map((post) => ({
+        feedPost: post,
+        score: Number(
+          (
+            post.numComments * COMMENT_WEIGHT +
+            post.numUpvotes * UPVOTE_WEIGHT +
+            (post.readTime ?? 0) * READ_TIME_WEIGHT
+          ).toFixed(2),
+        ),
+      }))
+      .sort((a, b) => b.score - a.score),
   };
 }

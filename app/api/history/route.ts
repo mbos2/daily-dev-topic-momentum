@@ -1,6 +1,15 @@
-import {readHistory} from '@/app/services/history';
 import {NextResponse} from 'next/server';
 
+import {getHistorySnapshots, getTotalBattles} from '@/app/lib/db/read-history';
+
 export async function GET() {
-  return NextResponse.json(await readHistory());
+  const snapshots = await getHistorySnapshots();
+
+  const totalBattles = await getTotalBattles();
+
+  return NextResponse.json({
+    totalBattles,
+
+    snapshots,
+  });
 }

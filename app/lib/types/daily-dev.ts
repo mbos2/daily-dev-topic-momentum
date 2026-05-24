@@ -85,7 +85,3 @@ export interface DailyCollectionResponse<T> {
 export interface DailySingleResponse<T> {
   data: T;
 }
-
-export interface DailyTag {
-  name: string;
-}

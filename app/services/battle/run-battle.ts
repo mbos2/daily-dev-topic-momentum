@@ -1,9 +1,13 @@
 import 'server-only';
 
 import {searchAllPosts} from '../daily-dev/search';
+
+import {saveTopicStats} from '@/app/lib/db/save-topic-stats';
+
 import {aggregateTopic} from './aggregate-topic';
 import {buildStats} from './build-stats';
 import {calculateOverlap} from './calculate-overlap';
+
 import type {BattleQuery, BattleResponseDto, BattleTopic, DailyFeedPost} from '@/app/lib/types';
 
 interface TopicFeed {
@@ -44,11 +48,15 @@ export async function runBattle(query: BattleQuery): Promise<BattleResponseDto> 
     current.stats.engagement.score > best.stats.engagement.score ? current : best,
   );
 
-  return {
+  const battle: BattleResponseDto = {
     range: query.range,
     winner: winner.stats.topic,
     sharedPosts: overlap.overlapCount,
     topics,
     stats: buildStats(topics),
   };
+
+  await saveTopicStats(battle);
+
+  return battle;
 }

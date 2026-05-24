@@ -1,7 +1,10 @@
-import {runBattle} from '@/app/services/battle';
+import {NextRequest, NextResponse} from 'next/server';
+
+import {runBattle} from '@/app/services/battle/run-battle';
 import {createSnapshot, writeHistory} from '@/app/services/history';
+import {saveHistorySnapshotPartial} from '@/app/lib/db/save-history-snapshot-partial';
+
 import type {ApiErrorResponse, BattleQuery, BattleResponseDto, TimeRange} from '@/app/lib/types';
-import {type NextRequest, NextResponse} from 'next/server';
 
 const VALID_RANGES = ['day', 'week', 'month'] as const;
 
@@ -18,40 +21,37 @@ function errorResponse(status: number, message: string): NextResponse<ApiErrorRe
 }
 
 function isRange(value: string): value is TimeRange {
-  return VALID_RANGES.some((range): boolean => range === value);
+  return VALID_RANGES.includes(value as (typeof VALID_RANGES)[number]);
 }
 
 function parseTopics(value: string): BattleQuery['topics'] {
   const topics = value
     .split(',')
-    .map((topic: string): string => topic.trim())
-    .filter((topic): boolean => topic.length > 0);
+    .map((topic) => topic.trim())
+    .filter(Boolean);
 
   if (topics.length < 2 || topics.length > 3) {
     throw new Error('Battle supports 2 or 3 topics');
   }
 
-  if (topics.length === 2) {
-    return [topics[0], topics[1]];
-  }
-
-  return [topics[0], topics[1], topics[2]];
+  return topics as BattleQuery['topics'];
 }
 
 export async function GET(request: NextRequest): Promise<NextResponse<BattleResponseDto | ApiErrorResponse>> {
   try {
     const topics = request.nextUrl.searchParams.get('topics');
     const range = request.nextUrl.searchParams.get('range');
-    if (topics === null) {
-      return errorResponse(400, 'Missing "topics"');
+
+    if (!topics) {
+      return errorResponse(400, 'Missing topics');
     }
 
-    if (range === null) {
-      return errorResponse(400, 'Missing "range"');
+    if (!range) {
+      return errorResponse(400, 'Missing range');
     }
 
     if (!isRange(range)) {
-      return errorResponse(400, `Invalid range "${range}"`);
+      return errorResponse(400, 'Invalid range');
     }
 
     const battle = await runBattle({
@@ -60,7 +60,9 @@ export async function GET(request: NextRequest): Promise<NextResponse<BattleResp
     });
 
     const snapshot = createSnapshot(battle);
+
     await writeHistory(snapshot);
+    await saveHistorySnapshotPartial(battle, snapshot.id);
 
     return NextResponse.json(battle);
   } catch (error) {
