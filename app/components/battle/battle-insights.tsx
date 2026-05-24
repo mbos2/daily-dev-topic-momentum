@@ -26,8 +26,20 @@ function InsightCard({title, children, footer}: InsightCardProps) {
         base: 8,
         lg: 9,
       }}
-      minH="420px">
-      <VStack align="stretch" h="100%" gap={10}>
+      minH={{
+        base: 'auto',
+        lg: '26.25rem',
+      }}>
+      <VStack
+        align="stretch"
+        h={{
+          base: 'auto',
+          lg: '100%',
+        }}
+        gap={{
+          base: 6,
+          lg: 10,
+        }}>
         <Text color="#8d95a4" fontSize="14px" letterSpacing="0.18em" textTransform="uppercase">
           {title}
         </Text>
@@ -56,22 +68,23 @@ function VictoryMargin({battle}: Props) {
     <InsightCard
       title="Victory Margin"
       footer={`${winner?.stats.topic.toUpperCase() ?? '-'} leads over ${second?.stats.topic.toUpperCase() ?? '-'}`}>
-      <Box h="100%">
+      <Box>
         <Text
           fontWeight="900"
           fontSize={{
-            base: '24px',
-            md: '32px',
-            lg: '45px',
-            xl: '50px',
+            base: '3.125rem',
           }}>
           +{margin}
         </Text>
 
         <Box
+          mt={{
+            base: 4,
+            lg: 8,
+          }}
           fontSize={{
-            base: '80px',
-            lg: '122px',
+            base: '3.5rem',
+            lg: '7.625rem',
           }}>
           <FaArrowTrendUp />
         </Box>

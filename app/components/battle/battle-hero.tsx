@@ -38,7 +38,7 @@ export function BattleHero({battle}: BattleHeroProps) {
           transform="translateX(-50%)"
           fontWeight="800"
           fontSize={{
-            base: '5rem',
+            base: '4rem',
             lg: '14rem',
           }}
           opacity={0.04}
@@ -76,7 +76,7 @@ export function BattleHero({battle}: BattleHeroProps) {
             border="1px solid #414141ff"
             borderRadius="1.5rem"
             overflow="hidden"
-            w={'50%'}
+            w={{base: '100%', md: '80%', lg: '50%'}}
             flexWrap={{
               base: 'wrap',
               lg: 'nowrap',
@@ -84,7 +84,7 @@ export function BattleHero({battle}: BattleHeroProps) {
             {scores.map((item, index) => (
               <Box
                 key={item.topic}
-                borderRight={index < scores.length - 1 ? '1px solid' : 'none'}
+                borderRight={{base: 'none', lg: index < scores.length - 1 ? '1px solid' : 'none'}}
                 flex="1"
                 px={6}
                 py={5}
