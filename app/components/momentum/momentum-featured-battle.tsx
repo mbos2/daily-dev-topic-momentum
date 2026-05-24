@@ -1,9 +1,7 @@
 'use client';
 
 import {Box, Flex, Grid, Spacer, Text, VStack} from '@chakra-ui/react';
-
 import Link from 'next/link';
-
 import type {HistorySnapshotPartial} from '@/app/lib/types';
 
 interface Props {

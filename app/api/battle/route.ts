@@ -1,9 +1,7 @@
 import {NextRequest, NextResponse} from 'next/server';
-
 import {runBattle} from '@/app/services/battle/run-battle';
 import {createSnapshot, writeHistory} from '@/app/services/history';
 import {saveHistorySnapshotPartial} from '@/app/lib/db/save-history-snapshot-partial';
-
 import type {ApiErrorResponse, BattleQuery, BattleResponseDto, TimeRange} from '@/app/lib/types';
 
 const VALID_RANGES = ['day', 'week', 'month'] as const;

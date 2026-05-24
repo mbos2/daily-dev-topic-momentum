@@ -1,9 +1,7 @@
 'use client';
 
 import {Box, Grid, HStack, Text, VStack} from '@chakra-ui/react';
-
 import {FaArrowTrendUp} from 'react-icons/fa6';
-
 import type {BattleResponseDto} from '@/app/lib/types';
 
 interface Props {

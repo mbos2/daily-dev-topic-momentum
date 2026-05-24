@@ -22,7 +22,6 @@ export async function GET(
       {
         error: 'SNAPSHOT_NOT_FOUND',
       },
-
       {
         status: 404,
       },

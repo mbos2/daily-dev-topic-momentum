@@ -1,11 +1,8 @@
 'use client';
 
 import {useState} from 'react';
-
 import {Box, Button, Grid, Text, VStack} from '@chakra-ui/react';
-
 import {MomentumHistoryCard} from './momentum-history-card';
-
 import type {HistorySnapshotPartial} from '@/app/lib/types';
 
 interface Props {
@@ -16,9 +13,7 @@ const PAGE_SIZE = 9;
 
 export function MomentumPreviousBattles({battles}: Props) {
   const [visible, setVisible] = useState(PAGE_SIZE);
-
   const visibleBattles = battles.slice(0, visible);
-
   const hasMore = visible < battles.length;
 
   function loadMore() {

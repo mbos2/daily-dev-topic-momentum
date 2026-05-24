@@ -1,5 +1,4 @@
 import type {MomentumSummaryCard} from '@/app/lib/types/momentum';
-
 import {Box, Grid, Text, VStack} from '@chakra-ui/react';
 
 interface Props {

@@ -1,9 +1,7 @@
 'use client';
 
 import {useState} from 'react';
-
 import {Box, Button, Table, Text, VStack} from '@chakra-ui/react';
-
 import type {BattleResponseDto} from '@/app/lib/types';
 import {Link} from '../link';
 
