@@ -155,7 +155,7 @@ export function BattleInsights({battle}: Props) {
           base: '4xl',
           lg: '5xl',
         }}>
-        Battle Insights
+        Momentum Insights
       </Text>
 
       <Grid
