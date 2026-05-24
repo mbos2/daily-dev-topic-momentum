@@ -1,10 +1,12 @@
-# Daily Dev Topic Pulse
+# Daily Dev Topic Momentum
 
-Topic Battles is a hackathon project built on top of the daily.dev public API.
+Topic Momentum is a hackathon project built on top of the daily.dev public API.
 
-The goal is to compare developer topics over time and determine which topic wins based on engagement and article quality.
+The goal is simple:
 
-This project is intentionally content-first and not an analytics dashboard.
+Pick developer topics, compare them over time, and discover which topic builds the strongest momentum.
+
+Unlike traditional analytics dashboards, Topic Momentum focuses on content, engagement, and battle-style comparisons.
 
 ---
 
@@ -12,19 +14,25 @@ This project is intentionally content-first and not an analytics dashboard.
 
 ### Topic Battles
 
-Compare 2 or 3 topics.
+Compare:
+
+- 2 topics
+- 3 topics
 
 Examples:
 
 - React vs Vue
 - Rust vs Go
-- Rust vs Go vs Svelte
+- C# vs C++
+- PostgreSQL vs MongoDB vs Redis
+
+Or, just run a random battle button and see what you get!
 
 ---
 
 ### Time Ranges
 
-Supported ranges:
+Supported periods:
 
 - Day
 - Week
@@ -34,114 +42,100 @@ Supported ranges:
 
 ### Topic Statistics
 
-Per topic:
+Every battle generates:
 
 - Total Articles
 - Total Comments
 - Total Upvotes
 - Total Read Time
-- Unique Articles
-- Shared Articles
-- Engagement Score calculated based on other stats
+- Unique Posts
+- Overlap Posts
+- Momentum Score
+
+---
+
+### Momentum Ranking
+
+Topics are ranked using weighted engagement signals.
+
+Momentum combines:
+
+- Discussion
+- Community approval
+- Reading depth
+- Topic overlap
 
 ---
 
 ### Top Articles
 
-Each topic returns:
+Per topic:
 
-- article
-- calculated score
+- Ranked articles
+- Momentum score
+- Load more support
 
-Sorted descending.
+---
+
+### Battle Insights
+
+Generated automatically:
+
+- Victory Margin
+- Content Efficiency
+- Article Dominance
+
+---
+
+### History
+
+Save and revisit previous battles.
+
+Includes:
+
+- Historical snapshots
+- Previous comparisons
+- Battle results
 
 ---
 
 ## Architecture
 
+```text
 Frontend
-
 ↓
-
 Next.js API
-
 ↓
-
 daily.dev API
-
 ↓
-
 Transform
-
 ↓
-
 Response
+```
 
-Frontend never calls daily.dev directly.
+Frontend never communicates directly with daily.dev.
 
 ---
 
-## Stack
+## Tech Stack
 
-Frontend:
+Frontend
 
 - Next.js (App Router)
 - TypeScript
 - Chakra UI
 - TailwindCSS
 
-Backend:
+Backend
 
 - Next.js Route Handlers
 - Axios
 
-Storage for history snapshots:
+Storage
 
-- JSON files
+- JSON
+- Vercel Blob
 
-Hosting:
+Hosting
 
 - Vercel
-
----
-
-## Environment
-
-Create:
-
-.env.local
-
-Example:
-
-```env
-DAILY_DEV_API_BASE_URL=
-DAILY_DEV_API_TOKEN=
-BLOB_STORE_ID="store_xN6XJAStCrRJpEk4"
-BLOB_READ_WRITE_TOKEN="vercel_blob_rw_xN6XJAStCrRJpEk4_vJdw2RbdIKbArM9abqKg0p88mSQYHD"
-```
-
----
-
-## Run
-
-Install:
-
-```bash
-npm install
-```
-
-Run:
-
-```bash
-npm run dev
-```
-
----
-
-## Deployment
-
-Vercel
-
-Environment variables must be configured in Vercel dashboard.
-
----
